@@ -3,6 +3,8 @@ import './App.css';
 import { FaPencilAlt, FaSave } from 'react-icons/fa';
 
 const App = () => {
+  const { isAuthenticated, isLoading, error, logout, user } = useAuth0();
+  const [nomeDistribuidora, setNomesDistribuidoras] = useState('');
   const [capacidades, setCapacidades] = useState([
     {
       semana: 1,
@@ -42,24 +44,70 @@ const App = () => {
     }
   ]);
   const [editingProduct, setEditingProduct] = useState(null);
-  const [currentValue, setCurrentValue] = useState('')
+  const [editingProductValue, setEditingProductValue] = useState('');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:3003/relacao_usuario_distribuidora', {
+          headers: {
+            'username': 'cogny',
+            'password': '@s8mpEf4wRrdD0&Wn^jI0z0Q8h$9aXxTi9Fc!m%Yn74zG4P@6l'
+          },
+        });
+        const usuarioLogado = response.data.filter((item) => item.email === user.email);
+        const distribuidoras = usuarioLogado.map((item) => item.distribuidora);
+
+        // Fazer a segunda requisição para obter os nomes das distribuidoras
+        const responseDistribuidoras = await axios.get('http://localhost:3003/distribuidoras', {
+          headers: {
+            'username': 'cogny',
+            'password': '@s8mpEf4wRrdD0&Wn^jI0z0Q8h$9aXxTi9Fc!m%Yn74zG4P@6l'
+          },
+        });
+
+        // Encontrar os nomes das distribuidoras do usuário logado
+        const nomesDistribuidoras = responseDistribuidoras.data
+          .filter((item) => distribuidoras.includes(item.cod))
+          .map((item) => item.nome);
+
+        setNomesDistribuidoras(nomesDistribuidoras);
+      } catch (error) { }
+    };
+
+    fetchData();
+  }, [user]);
 
   const handleQuantidadeChange = (semanaIndex, produto, dia, quantidade) => {
     const capacidadesCopy = [...capacidades];
     const semanaAtual = capacidadesCopy[semanaIndex];
-    semanaAtual.produtos[produto] = semanaAtual.produtos[produto] || {}; // Verifica se a estrutura existe, caso contrário cria um objeto vazio
+    semanaAtual.produtos[produto] = semanaAtual.produtos[produto] || {};
     semanaAtual.produtos[produto][dia] = quantidade === '' ? null : parseInt(quantidade, 10);
     setCapacidades(capacidadesCopy);
+
+    if (editingProduct === `${semanaIndex} - ${produto} - ${dia}`) {
+      setEditingProductValue(quantidade);
+    }
   };
 
-  const handleEditClick = (semana, tipoProduto, dia, setCurrentValue, VALOR_GERAL) => {
-    setEditingProduct(`${semana} - ${tipoProduto} - ${dia} - ${setCurrentValue}`);
-    setCurrentValue(VALOR_GERAL)
+  const handleEditClick = (semana, tipoProduto, dia) => {
+    setEditingProduct(`${semana} - ${tipoProduto} - ${dia}`);
+    const semanaIndex = capacidades.findIndex((item) => item.semana === semana);
+    if (semanaIndex !== -1) {
+      const semanaAtual = capacidades[semanaIndex];
+      const valor = semanaAtual.produtos[tipoProduto][dia] || '';
+      setEditingProductValue(valor);
+    }
   };
 
   const handleSaveClick = (semana, produto, dia) => {
-    console.log(`${semana} - ${produto} - ${dia}`)
-    // Lógica para salvar os dados
+    console.log(`${semana} - ${produto} - ${dia} - ${editingProductValue}`);
+    setEditingProduct(null);
+    const capacidadesCopy = [...capacidades];
+    const semanaAtual = capacidadesCopy[semana];
+    semanaAtual.produtos[produto][dia] = parseInt(editingProductValue, 10) || null;
+    setCapacidades(capacidadesCopy);
+    setEditingProductValue('');
   };
 
   const getWeekDates = (weekIndex) => {
@@ -127,17 +175,16 @@ const App = () => {
             <td className="vertical-align">
               <input
                 className="quantity-input"
-                value={editingProduct !== `${semana} - ${tipoProduto} - ${dia}` ? setCurrentValue : currentValue}
+                value={editingProduct !== `${semana} - ${tipoProduto} - ${dia}` ? (produtos && produtos[dia]) || '' : editingProductValue}
                 type="number"
                 disabled={editingProduct !== `${semana} - ${tipoProduto} - ${dia}`}
-                defaultValue={produtos[dia] !== null ? produtos[dia] : ''}
-                onChange={(e) => setCurrentValue(e.target.value)}
+                onChange={(e) => handleQuantidadeChange(semana, tipoProduto, dia, e.target.value)}
               />
-              {editingProduct !== `${semana} - ${tipoProduto} - ${dia}` ?
-                <FaPencilAlt className="edit-icon" onClick={() => handleEditClick(semana, tipoProduto, dia, setCurrentValue)} />
-                :
-                <FaSave className="save-icon" onClick={handleSaveClick} />
-              }
+              {editingProduct !== `${semana} - ${tipoProduto} - ${dia}` ? (
+                <FaPencilAlt className="edit-icon" onClick={() => handleEditClick(semana, tipoProduto, dia)} />
+              ) : (
+                <FaSave className="save-icon" onClick={() => handleSaveClick(semana, tipoProduto, dia)} />
+              )}
             </td>
           </React.Fragment>
         ))}

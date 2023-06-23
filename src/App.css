@@ -1,0 +1,157 @@
+.vertical-align {
+  display: flex;
+  align-items: center;
+}
+
+body {
+  background-color: #f2f2f2;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center; /* Centraliza verticalmente os elementos internos */
+}
+
+h1 {
+  text-align: center;
+}
+
+table {
+  margin-top: 20px;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th {
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
+td {
+  padding: 10px;
+  text-align: center;
+}
+
+.vertical-align {
+  vertical-align: middle;
+}
+
+input[type="number"] {
+  width: 60px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+.empty-cell {
+  width: 20px;
+}
+
+.quantity-input {
+  width: 60px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-family: Arial, sans-serif;
+  /* Outras propriedades de estilo que você desejar */
+}
+
+.save-button {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: 20px;
+}
+
+.save-button:hover {
+  background-color: #0056b3;
+}
+
+.logoLogin {
+  width: 400px;
+  height: 150px;
+}
+
+.title {
+  font-size: 20px;
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.login-card {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.login-text {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.login-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.login-button:hover {
+  background-color: #0056b3;
+}
+
+.access-denied-text {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.access-denied-message {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.logout-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 10px;
+  display: flex;
+}
+
+.logout-button {
+  padding: 10px 20px;
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background-color: #c82333;
+}
+
+.user-email {
+  margin-right: 20px;
+}
